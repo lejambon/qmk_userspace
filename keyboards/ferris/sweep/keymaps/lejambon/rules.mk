@@ -1,3 +1,6 @@
 CONVERT_TO = promicro_rp2040
+
 MOUSEKEY_ENABLE = no
 CONSOLE_ENABLE = no
+
+LTO_ENABLE = yes
