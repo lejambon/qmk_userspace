@@ -1,3 +1,3 @@
 # QMK Keymaps
 
-![Ferris Sweep](./img/ferris/sweep/lejambon.svg)
+![Split 3x5 2](./img/split_3x5_2.svg)
