@@ -6,23 +6,14 @@ readonly root_dir=$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")
 readonly qmk_cfg="${root_dir}/qmk.json"
 readonly img_dir="${root_dir}/img"
 
-jq -r '.build_targets[] | join(" ")' < "${qmk_cfg}" | while read keyboard keymap; do
-	echo "${keyboard} ${keymap}"
+jq -r '.build_targets[][:2] | join(" ")' < "${qmk_cfg}" | while read keyboard keymap; do
+	layout=$(qmk list-layouts -kb "${keyboard}" | head -n 1)
+	output="${img_dir}/${layout}_${keymap}.svg"
 
-	qmk list-layouts -kb "${keyboard}" | while read layout; do
-		echo -n "  ${layout}: "
+	echo "${keyboard} ${layout} ${keymap}: ${output}"
 
-		keymap_dir="${root_dir}/layouts/${layout}/${keymap}"
-		if [[ -d ${keymap_dir} ]]; then
-			output="${img_dir}/${layout}_${keymap}.svg"
-			echo "${output}"
-
-			qmk c2json "${keymap_dir}/keymap.c" \
-				| jq ".layout = \"LAYOUT_${layout}\"" \
-				| keymap parse -c 10 -q - \
-				| keymap draw - > "${output}"
-		else
-			echo "not found"
-		fi
-	done
+	qmk c2json -kb "${keyboard}" -km "${keymap}" \
+		| jq ".layout = \"LAYOUT_${layout}\"" \
+		| keymap parse -c 10 -q - \
+		| keymap draw - > "${output}"
 done
