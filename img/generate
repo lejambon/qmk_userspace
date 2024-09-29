@@ -1,0 +1,28 @@
+#!/bin/bash
+
+set -euo pipefail
+
+readonly root_dir=$(realpath "$(dirname "${BASH_SOURCE[0]}")/..")
+readonly qmk_cfg="${root_dir}/qmk.json"
+readonly img_dir="${root_dir}/img"
+
+jq -r '.build_targets[] | join(" ")' < "${qmk_cfg}" | while read keyboard keymap; do
+	echo "${keyboard} ${keymap}"
+
+	qmk list-layouts -kb "${keyboard}" | while read layout; do
+		echo -n "  ${layout}: "
+
+		keymap_dir="${root_dir}/layouts/${layout}/${keymap}"
+		if [[ -d ${keymap_dir} ]]; then
+			output="${img_dir}/${layout}_${keymap}.svg"
+			echo "${output}"
+
+			qmk c2json "${keymap_dir}/keymap.c" \
+				| jq ".layout = \"LAYOUT_${layout}\"" \
+				| keymap parse -c 10 -q - \
+				| keymap draw - > "${output}"
+		else
+			echo "not found"
+		fi
+	done
+done
