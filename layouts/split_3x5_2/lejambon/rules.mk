@@ -1,1 +1,1 @@
-include $(QMK_USERSPACE)/rules.mk
+include $(QMK_USERSPACE)/common/rules.mk

@@ -8,4 +8,3 @@ OPT_DEFS += -DNO_ACTION_ONESHOT -DNO_ACTION_TAPPING
 LTO_ENABLE = yes
 
 include $(QMK_USERSPACE)/keyboards/$(KEYBOARD)/rules.mk
-
